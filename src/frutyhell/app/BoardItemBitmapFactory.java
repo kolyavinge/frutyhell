@@ -13,10 +13,10 @@ public class BoardItemBitmapFactory {
 	}
 
 	public Bitmap getState1Bitmap() {
-		return BitmapFactory.decodeResource(resources, R.drawable.banana_20);
+		return BitmapFactory.decodeResource(resources, R.drawable.img_5);
 	}
 
 	public Bitmap getState2Bitmap() {
-		return BitmapFactory.decodeResource(resources, R.drawable.tomato_10);
+		return BitmapFactory.decodeResource(resources, R.drawable.img_4);
 	}
 }

@@ -3,10 +3,11 @@ package frutyhell.model;
 public class GameModel {
 
 	private GameBoard board;
+	private GameModelListener listener;
 
 	public GameModel() {
-		board = new GameBoard(6, 7);
-		Shaker shaker = new Shaker(2);
+		board = new GameBoard(5, 6);
+		Shaker shaker = new Shaker(5);
 		shaker.shake(board);
 	}
 
@@ -20,5 +21,9 @@ public class GameModel {
 
 	public GameBoard getBoard() {
 		return board;
+	}
+
+	public void setListener(GameModelListener listener) {
+		this.listener = listener;
 	}
 }

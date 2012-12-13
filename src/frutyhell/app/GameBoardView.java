@@ -2,98 +2,74 @@ package frutyhell.app;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.view.View;
+import android.view.ViewGroup;
 import frutyhell.model.BoardItem;
 import frutyhell.model.GameBoard;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class GameBoardView extends View {
+public class GameBoardView extends ViewGroup {
 
-	private float cellSize;
 	private GameBoard board;
-	private Paint paint;
+	private GridView gridView;
 	private Collection<BoardItemView> itemViewCollection;
+	private BoardItemBitmapFactory boardItemBitmapFactory;
 
 	public GameBoardView(GameBoard board, Context context) {
 		super(context);
 		this.board = board;
-		this.paint = new Paint();
-		this.paint.setColor(Color.WHITE);
-		createItemViewCollection();
+		initGridView(board.getHeight(), board.getWidth());
+		initItemViewCollection();
+		initItemBitmaps();
 	}
 
-	public float getCellSize() {
-		return cellSize;
+	private void initGridView(int rows, int cols) {
+		gridView = new GridView(getContext());
+		gridView.setGridSize(rows, cols);
+		gridView.setGridColor(Color.WHITE);
+		addView(gridView);
 	}
 
-	public void setStateBitmaps(Bitmap state1, Bitmap state2) {
-		for (BoardItemView itemView : itemViewCollection) {
-			itemView.setStateBitmaps(state1, state2);
-		}
-	}
-
-	@Override
-	public void draw(Canvas canvas) {
-		calculateCellSize(canvas);
-		drawGrid(canvas);
-		drawItems(canvas);
-	}
-
-	private void drawItems(Canvas canvas) {
-		for (BoardItemView itemView : itemViewCollection) {
-			int x = (int) (cellSize * itemView.getItem().getCol());
-			int y = (int) (cellSize * itemView.getItem().getRow());
-			int width = (int) (x + cellSize);
-			int height = (int) (y + cellSize);
-			itemView.layout(x, y, width, height);
-			itemView.draw(canvas);
-		}
-	}
-
-	private void drawGrid(Canvas canvas) {
-		drawHorizontalLines(canvas, paint);
-		drawVerticalLines(canvas, paint);
-	}
-
-	private void drawHorizontalLines(Canvas canvas, Paint paint) {
-		float width = cellSize * board.getWidth() + getLeft();
-		for (int row = 0; row <= board.getHeight(); row++) {
-			float y = cellSize * row + getTop();
-			canvas.drawLine(getLeft(), y, width, y, paint);
-		}
-	}
-
-	private void drawVerticalLines(Canvas canvas, Paint paint) {
-		float height = cellSize * board.getHeight() + getTop();
-		for (int col = 0; col <= board.getWidth(); col++) {
-			float x = cellSize * col + getLeft();
-			canvas.drawLine(x, getTop(), x, height, paint);
-		}
-	}
-
-	private void calculateCellSize(Canvas canvas) {
-		Rect rect = canvas.getClipBounds();
-
-		float width = rect.right - rect.left;
-		float height = rect.bottom - rect.top;
-
-		float dx = width / board.getWidth() - 0.1f;
-		float dy = height / board.getHeight() - 0.1f;
-
-		cellSize = dx < dy ? dx : dy;
-	}
-
-	private void createItemViewCollection() {
+	private void initItemViewCollection() {
 		itemViewCollection = new ArrayList<BoardItemView>(board.getWidth() * board.getHeight());
 		for (BoardItem item : board.getItems()) {
 			BoardItemView itemView = new BoardItemView(item, getContext());
 			itemViewCollection.add(itemView);
+			addView(itemView);
+		}
+	}
+
+	private void initItemBitmaps() {
+		this.boardItemBitmapFactory = new BoardItemBitmapFactory(getResources());
+		setStateBitmaps(boardItemBitmapFactory.getState1Bitmap(), boardItemBitmapFactory.getState2Bitmap());
+	}
+
+	@Override
+	protected void onLayout(boolean changed, int l, int t, int r, int b) {
+		gridView.layout(l, t, r, b);
+		layoutItems();
+	}
+
+	private void layoutItems() {
+		float cellSize = gridView.getCellSize();
+		for (BoardItemView itemView : itemViewCollection) {
+			float left = cellSize * itemView.getItem().getCol() + getLeft();
+			float top = cellSize * itemView.getItem().getRow() + getTop();
+			float right = left + cellSize;
+			float bottom = top + cellSize;
+			itemView.layout((int) left, (int) top, (int) right, (int) bottom);
+		}
+	}
+
+	public float getCellSize() {
+		return gridView.getCellSize();
+	}
+
+	private void setStateBitmaps(Bitmap state1, Bitmap state2) {
+		for (BoardItemView itemView : itemViewCollection) {
+			itemView.setStateBitmaps(state1, state2);
 		}
 	}
 }

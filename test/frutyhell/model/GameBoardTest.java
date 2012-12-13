@@ -1,7 +1,12 @@
 package frutyhell.model;
 
+import static frutyhell.model.BoardItemState.STATE_1;
+import static frutyhell.model.BoardItemState.STATE_2;
+
+import java.util.Collection;
+import java.util.Iterator;
+
 import junit.framework.TestCase;
-import static frutyhell.model.BoardItemState.*;
 
 public class GameBoardTest extends TestCase {
 
@@ -66,6 +71,28 @@ public class GameBoardTest extends TestCase {
 			for (int j = 0; j < width - 1; j++) {
 				BoardItem item = board.getItem(i, j);
 				assertEquals(STATE_1, item.getState());
+			}
+		}
+	}
+
+	public void testGetLastInvertedItems() {
+		board.doStep(5, 5);
+		Collection<BoardItem> items = board.getLastInvertedItems();
+
+		assertEquals(10 + 20 - 1, items.size());
+
+		Iterator<BoardItem> iter = items.iterator();
+		for (int i = 0; i < width && iter.hasNext(); i++) {
+			BoardItem item = iter.next();
+			assertEquals(i, item.getCol());
+			assertEquals(5, item.getRow());
+		}
+
+		for (int i = 0; i < height && iter.hasNext(); i++) {
+			if (i != 5) {
+				BoardItem item = iter.next();
+				assertEquals(5, item.getCol());
+				assertEquals(i, item.getRow());
 			}
 		}
 	}

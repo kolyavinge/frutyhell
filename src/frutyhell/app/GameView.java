@@ -1,50 +1,35 @@
 package frutyhell.app;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
-import frutyhell.model.BoardItem;
-import frutyhell.model.GameBoard;
+import android.view.ViewGroup;
 import frutyhell.model.GameModel;
 
-public class GameView extends View {
+public class GameView extends ViewGroup {
 
 	private GameModel gameModel;
 	private GameBoardView gameBoardView;
-	private BoardItemBitmapFactory boardItemBitmapFactory;
 
 	public GameView(GameModel gameModel, Context context) {
 		super(context);
+		setBackgroundColor(Color.BLACK);
 		this.gameModel = gameModel;
-		this.boardItemBitmapFactory = new BoardItemBitmapFactory(getResources());
 		this.gameBoardView = new GameBoardView(gameModel.getBoard(), context);
-		this.gameBoardView.setStateBitmaps(boardItemBitmapFactory.getState1Bitmap(), boardItemBitmapFactory.getState2Bitmap());
-		this.gameBoardView.layout(0, 1, 0, 0);
+		addView(this.gameBoardView);
 	}
 
 	@Override
-	public void draw(Canvas canvas) {
-		fillBackground(canvas);
-		gameBoardView.draw(canvas);
+	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+		gameBoardView.layout(left, top + 1, right, bottom);
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		int row = (int) (event.getY() / gameBoardView.getCellSize());
-		int col = (int) (event.getX() / gameBoardView.getCellSize());
-		gameModel.doStep(row, col);
-		invalidate();
+		float row = event.getY() / gameBoardView.getCellSize();
+		float col = event.getX() / gameBoardView.getCellSize();
+		gameModel.doStep((int) row, (int) col);
 
 		return super.onTouchEvent(event);
-	}
-
-	private void fillBackground(Canvas canvas) {
-		Paint paint = new Paint();
-		paint.setColor(Color.BLACK);
-		canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
 	}
 }

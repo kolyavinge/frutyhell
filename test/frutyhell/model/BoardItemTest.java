@@ -1,7 +1,8 @@
 package frutyhell.model;
 
+import static frutyhell.model.BoardItemState.STATE_1;
+import static frutyhell.model.BoardItemState.STATE_2;
 import junit.framework.TestCase;
-import static frutyhell.model.BoardItemState.*;
 
 public class BoardItemTest extends TestCase {
 
@@ -13,7 +14,7 @@ public class BoardItemTest extends TestCase {
 		col = 2;
 		item = new BoardItem(row, col);
 	}
-	
+
 	public void testConstructor() {
 		assertEquals(row, item.getRow());
 		assertEquals(col, item.getCol());
@@ -23,11 +24,29 @@ public class BoardItemTest extends TestCase {
 	public void testSwitchState() {
 		item.switchState();
 		assertEquals(STATE_2, item.getState());
-		
+
 		item.switchState();
 		assertEquals(STATE_1, item.getState());
-		
+
 		item.switchState();
 		assertEquals(STATE_2, item.getState());
+	}
+
+	public void testOnAfterSwitchState() {
+		BoardItemListener listener = new BoardItemListener() {
+
+			public void onBeforeSwitchState(BoardItem i) {
+				assertSame(item, i);
+				assertEquals(STATE_1, item.getState());
+			}
+
+			public void onAfterSwitchState(BoardItem i) {
+				assertSame(item, i);
+				assertEquals(STATE_2, item.getState());
+			}
+		};
+
+		item.attachListener(listener);
+		item.switchState();
 	}
 }
