@@ -9,6 +9,7 @@ import frutyhell.model.GameBoard;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Random;
 
 public class GameBoardView extends ViewGroup {
 
@@ -21,8 +22,8 @@ public class GameBoardView extends ViewGroup {
 		super(context);
 		this.board = board;
 		initGridView(board.getHeight(), board.getWidth());
-		initItemViewCollection();
 		initItemBitmaps();
+		initItemViewCollection();
 	}
 
 	private void initGridView(int rows, int cols) {
@@ -43,20 +44,29 @@ public class GameBoardView extends ViewGroup {
 
 	private void initItemBitmaps() {
 		this.boardItemBitmapFactory = new BoardItemBitmapFactory(getResources());
-		setStateBitmaps(boardItemBitmapFactory.getState1Bitmap(), boardItemBitmapFactory.getState2Bitmap());
+		Random rand = new Random();
+		Bitmap state1, state2;
+		if (rand.nextInt(2) == 0) {
+			state1 = boardItemBitmapFactory.getLemonBitmap();
+			state2 = boardItemBitmapFactory.getStrawberryBitmap();
+		} else {
+			state1 = boardItemBitmapFactory.getStrawberryBitmap();
+			state2 = boardItemBitmapFactory.getLemonBitmap();
+		}
+		BoardItemView.setStateBitmaps(state1, state2);
 	}
 
 	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		gridView.layout(l, t, r, b);
+	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+		gridView.layout(0, 0, right - left, bottom - top);
 		layoutItems();
 	}
 
 	private void layoutItems() {
 		float cellSize = gridView.getCellSize();
 		for (BoardItemView itemView : itemViewCollection) {
-			float left = cellSize * itemView.getItem().getCol() + getLeft();
-			float top = cellSize * itemView.getItem().getRow() + getTop();
+			float left = cellSize * itemView.getItem().getCol();
+			float top = cellSize * itemView.getItem().getRow();
 			float right = left + cellSize;
 			float bottom = top + cellSize;
 			itemView.layout((int) left, (int) top, (int) right, (int) bottom);
@@ -65,11 +75,5 @@ public class GameBoardView extends ViewGroup {
 
 	public float getCellSize() {
 		return gridView.getCellSize();
-	}
-
-	private void setStateBitmaps(Bitmap state1, Bitmap state2) {
-		for (BoardItemView itemView : itemViewCollection) {
-			itemView.setStateBitmaps(state1, state2);
-		}
 	}
 }

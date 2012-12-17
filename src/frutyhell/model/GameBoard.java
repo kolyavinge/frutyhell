@@ -53,7 +53,7 @@ public class GameBoard {
 		return true;
 	}
 
-	void doStep(int row, int col) {
+	private void tryDoStep(int row, int col) {
 		invertedItems = new ArrayList<BoardItem>(width + height - 1);
 
 		// инвертируем ячейки по столбцам
@@ -71,8 +71,20 @@ public class GameBoard {
 		}
 	}
 
+	void doStep(int row, int col) {
+		if (inBoard(row, col) == false) {
+			throw new GameBoardException();
+		}
+
+		tryDoStep(row, col);
+	}
+
 	void doStep(BoardItem item) {
 		doStep(item.getRow(), item.getCol());
+	}
+
+	private boolean inBoard(int row, int col) {
+		return (0 <= row && row < height) && (0 <= col && col < width);
 	}
 
 	Collection<BoardItem> getLastInvertedItems() {

@@ -12,11 +12,11 @@ public class BoardItemBitmapFactory {
 		this.resources = resources;
 	}
 
-	public Bitmap getState1Bitmap() {
-		return BitmapFactory.decodeResource(resources, R.drawable.img_5);
+	public Bitmap getLemonBitmap() {
+		return BitmapFactory.decodeResource(resources, R.drawable.img_4);
 	}
 
-	public Bitmap getState2Bitmap() {
-		return BitmapFactory.decodeResource(resources, R.drawable.img_4);
+	public Bitmap getStrawberryBitmap() {
+		return BitmapFactory.decodeResource(resources, R.drawable.img_5);
 	}
 }

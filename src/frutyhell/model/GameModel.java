@@ -6,7 +6,7 @@ public class GameModel {
 	private GameModelListener listener;
 
 	public GameModel() {
-		board = new GameBoard(5, 6);
+		board = new GameBoard(5, 5);
 		Shaker shaker = new Shaker(5);
 		shaker.shake(board);
 	}

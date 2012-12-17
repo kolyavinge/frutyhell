@@ -107,4 +107,43 @@ public class GameBoardTest extends TestCase {
 		}
 		assertTrue(board.isCompleted());
 	}
+
+	public void testWrongStep() {
+		try {
+			board.doStep(-1, 0);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+
+		try {
+			board.doStep(0, -1);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+
+		try {
+			board.doStep(height, 0);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+
+		try {
+			board.doStep(0, width);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+	}
+
+	public void testWronStepNotSwiched() {
+		boolean raiseException = false;
+		try {
+			board.doStep(0, width);
+		} catch (GameBoardException exp) {
+			raiseException = true;
+		}
+		assertTrue(raiseException);
+		for (int col = 0; col < width; col++) {
+			assertEquals(STATE_1, board.getItem(0, col).getState());
+		}
+	}
 }

@@ -15,15 +15,23 @@ import frutyhell.model.DefaultBoardItemListener;
 
 public class BoardItemView extends View {
 
+	private static Bitmap state1Bitmap, state2Bitmap;
+
 	private BoardItem item;
-	private Bitmap state1Bitmap, state2Bitmap, currentStateBitmap;
+	private Bitmap currentStateBitmap;
 	private Paint paint;
+
+	public static void setStateBitmaps(Bitmap state1, Bitmap state2) {
+		BoardItemView.state1Bitmap = state1;
+		BoardItemView.state2Bitmap = state2;
+	}
 
 	public BoardItemView(BoardItem item, Context context) {
 		super(context);
 		this.item = item;
 		this.item.attachListener(boardItemListener);
 		this.paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+		setCurrentStateBitmap();
 	}
 
 	@Override
@@ -42,12 +50,6 @@ public class BoardItemView extends View {
 
 	public BoardItem getItem() {
 		return item;
-	}
-
-	public void setStateBitmaps(Bitmap state1, Bitmap state2) {
-		this.state1Bitmap = state1;
-		this.state2Bitmap = state2;
-		setCurrentStateBitmap();
 	}
 
 	private void setCurrentStateBitmap() {
