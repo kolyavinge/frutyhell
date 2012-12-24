@@ -14,8 +14,8 @@ public class GameBoardTest extends TestCase {
 	private GameBoard board;
 
 	public void setUp() {
-		width = 10;
-		height = 20;
+		width = 6;
+		height = 8;
 		board = new GameBoard(width, height);
 	}
 
@@ -30,6 +30,84 @@ public class GameBoardTest extends TestCase {
 				row++;
 				col = 0;
 			}
+		}
+	}
+	
+	public void testWrongSizeMessage() {
+		try {
+			new GameBoard(-1, -1);
+			fail();
+		} catch (GameBoardException exp){
+			assertEquals("Допустимый размер поля от 4х4 до 10х10", exp.getMessage());
+		}
+	}
+
+	public void testNegativeSize() {
+		try {
+			new GameBoard(-1, 5);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+
+		try {
+			new GameBoard(5, -1);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+	}
+
+	public void testZeroSize() {
+		try {
+			new GameBoard(0, 5);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+
+		try {
+			new GameBoard(5, 0);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+	}
+
+	public void testSmallSize() {
+
+		try {
+			new GameBoard(2, 5);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+
+		try {
+			new GameBoard(5, 2);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+
+		try {
+			new GameBoard(5, 3);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+
+		try {
+			new GameBoard(3, 5);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+	}
+
+	public void testLargeSize() {
+		try {
+			new GameBoard(11, 5);
+			fail();
+		} catch (GameBoardException exp) {
+		}
+
+		try {
+			new GameBoard(5, 11);
+			fail();
+		} catch (GameBoardException exp) {
 		}
 	}
 
@@ -79,7 +157,7 @@ public class GameBoardTest extends TestCase {
 		board.doStep(5, 5);
 		Collection<BoardItem> items = board.getLastInvertedItems();
 
-		assertEquals(10 + 20 - 1, items.size());
+		assertEquals(board.getWidth() + board.getHeight() - 1, items.size());
 
 		Iterator<BoardItem> iter = items.iterator();
 		for (int i = 0; i < width && iter.hasNext(); i++) {

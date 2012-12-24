@@ -1,15 +1,32 @@
 package frutyhell.model;
 
-import java.util.*;
-import static frutyhell.model.BoardItemState.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class GameBoard {
+
+	public static final int MIN_WIDTH = 4;
+	public static final int MIN_HEIGHT = 4;
+	public static final int MAX_WIDTH = 10;
+	public static final int MAX_HEIGHT = 10;
 
 	private int width, height;
 	private BoardItem[][] items;
 	private Collection<BoardItem> invertedItems;
 
-	public GameBoard(int width, int height) {
+	public static boolean isValidBoardSize(int width, int height) {
+		return (MIN_WIDTH <= width && width <= MAX_WIDTH) && (MIN_HEIGHT <= height && height <= MAX_HEIGHT);
+	}
+
+	public static void validateBoardSize(int width, int height) {
+		if (isValidBoardSize(width, height) == false) {
+			String message = String.format("Допустимый размер поля от %dх%d до %dх%d", MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT);
+			throw new GameBoardException(message);
+		}
+	}
+
+	GameBoard(int width, int height) {
+		validateBoardSize(width, height);
 		this.width = width;
 		this.height = height;
 		createGameMatrix();
@@ -79,11 +96,7 @@ public class GameBoard {
 		tryDoStep(row, col);
 	}
 
-	void doStep(BoardItem item) {
-		doStep(item.getRow(), item.getCol());
-	}
-
-	private boolean inBoard(int row, int col) {
+	public boolean inBoard(int row, int col) {
 		return (0 <= row && row < height) && (0 <= col && col < width);
 	}
 

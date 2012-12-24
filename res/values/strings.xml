@@ -1,8 +1,8 @@
 <resources>
 
-    <string name="app_name">frutyhell</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Fruity hell</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_fruty_hell">FrutyHellActivity</string>
+    <string name="title_activity_main_menu">Fruity hell</string>
+    <string name="title_activity_game">Fruity hell</string>
 
 </resources>

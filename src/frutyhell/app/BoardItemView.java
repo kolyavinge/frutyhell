@@ -1,6 +1,7 @@
 package frutyhell.app;
 
 import static frutyhell.model.BoardItemState.STATE_1;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,6 +14,7 @@ import frutyhell.model.BoardItem;
 import frutyhell.model.BoardItemListener;
 import frutyhell.model.DefaultBoardItemListener;
 
+@SuppressLint("ViewConstructor")
 public class BoardItemView extends View {
 
 	private static Bitmap state1Bitmap, state2Bitmap;

@@ -3,12 +3,15 @@ package frutyhell.app;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 import frutyhell.model.BoardItem;
 import frutyhell.model.GameBoard;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Random;
 
 public class GameBoardView extends ViewGroup {
@@ -17,13 +20,50 @@ public class GameBoardView extends ViewGroup {
 	private GridView gridView;
 	private Collection<BoardItemView> itemViewCollection;
 	private BoardItemBitmapFactory boardItemBitmapFactory;
+	private GameBoardViewListener listener;
 
-	public GameBoardView(GameBoard board, Context context) {
+	public GameBoardView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		init(null);
+	}
+
+	public GameBoardView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init(null);
+	}
+
+	public GameBoardView(Context context) {
 		super(context);
+		init(null);
+	}
+
+	public GameBoard getGameBoard() {
+		return board;
+	}
+
+	public void setGameBoard(GameBoard board) {
 		this.board = board;
-		initGridView(board.getHeight(), board.getWidth());
-		initItemBitmaps();
-		initItemViewCollection();
+		init(board);
+	}
+
+	private void init(GameBoard board) {
+		if (board != null) {
+			initGridView(board.getHeight(), board.getWidth());
+			initItemBitmaps();
+			initItemViewCollection(board.getWidth(), board.getHeight(), board.getItems());
+		} else {
+			// дефолтное игровое поля для еклипсовского редактора вьюшек
+			initGridView(5, 5);
+			initItemViewCollection(5, 5, Collections.<BoardItem> emptyList());
+		}
+	}
+
+	public GameBoardViewListener getListener() {
+		return listener;
+	}
+
+	public void setListener(GameBoardViewListener listener) {
+		this.listener = listener;
 	}
 
 	private void initGridView(int rows, int cols) {
@@ -33,9 +73,9 @@ public class GameBoardView extends ViewGroup {
 		addView(gridView);
 	}
 
-	private void initItemViewCollection() {
-		itemViewCollection = new ArrayList<BoardItemView>(board.getWidth() * board.getHeight());
-		for (BoardItem item : board.getItems()) {
+	private void initItemViewCollection(int boardWidth, int boardHeight, Iterable<BoardItem> boardItems) {
+		itemViewCollection = new ArrayList<BoardItemView>(boardWidth * boardHeight);
+		for (BoardItem item : boardItems) {
 			BoardItemView itemView = new BoardItemView(item, getContext());
 			itemViewCollection.add(itemView);
 			addView(itemView);
@@ -73,7 +113,20 @@ public class GameBoardView extends ViewGroup {
 		}
 	}
 
-	public float getCellSize() {
-		return gridView.getCellSize();
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		float row = event.getY() / gridView.getCellSize();
+		float col = event.getX() / gridView.getCellSize();
+		if (board.inBoard((int) row, (int) col)) {
+			raiseOnCellClick((int) row, (int) col);
+		}
+
+		return super.onTouchEvent(event);
+	}
+
+	private void raiseOnCellClick(int row, int col) {
+		if (listener != null) {
+			listener.onCellClick(this, row, col);
+		}
 	}
 }

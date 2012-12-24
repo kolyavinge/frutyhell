@@ -12,7 +12,7 @@ public class BoardItem {
 	private BoardItemState state;
 	private Collection<BoardItemListener> listeners;
 
-	public BoardItem(int row, int col) {
+	BoardItem(int row, int col) {
 		this.row = row;
 		this.col = col;
 		this.state = STATE_1;
